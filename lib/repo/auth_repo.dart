@@ -2,9 +2,6 @@ import 'package:flutter/foundation.dart' show immutable;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-import 'package:flutter/foundation.dart' show immutable;
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 @immutable
 class AuthRepository {
@@ -40,5 +37,4 @@ Future<void> signout()async{
   await _googleSignIn.signOut();
   await _firebaseAuth.signOut();
 }
-
 } 

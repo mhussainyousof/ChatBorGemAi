@@ -17,6 +17,23 @@ class Message {
     required this.isMine,
   });
 
+Message copyWith({
+  String? id,
+  String? message,
+  String? imageUrl,
+  DateTime? createdAt,
+  bool? isMine,
+}) {
+  return Message(
+    id: id ?? this.id,
+    message: message ?? this.message,
+    imageUrl: imageUrl ?? this.imageUrl,
+    createdAt: createdAt ?? this.createdAt,
+    isMine: isMine ?? this.isMine,
+  );
+}
+
+
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
