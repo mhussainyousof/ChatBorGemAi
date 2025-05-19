@@ -1,0 +1,2 @@
+C:/Users/hussain_yousof/Desktop/instagram/android/app/.cxx/Debug/2g5t1567/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/hussain_yousof/Desktop/instagram/android/app/.cxx/Debug/2g5t1567/armeabi-v7a/CMakeFiles/rebuild_cache.dir

@@ -1,26 +1,51 @@
 {
   "project_info": {
-    "project_number": "154637700596",
-    "project_id": "instagram-ce2c7",
-    "storage_bucket": "instagram-ce2c7.firebasestorage.app"
+    "project_number": "1043452257427",
+    "project_id": "gemchat-a0a2b",
+    "storage_bucket": "gemchat-a0a2b.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:154637700596:android:b7df6463134b54facefda1",
+        "mobilesdk_app_id": "1:1043452257427:android:236560e3120f0df64e5966",
         "android_client_info": {
-          "package_name": "com.example.instagram"
+          "package_name": "com.example.gemini_chat_bot"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1043452257427-8fe46kegc3rg41k7d4hbko4la2c72t3g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.gemini_chat_bot",
+            "certificate_hash": "cbdfba4329d65708350631fea7f499ee388a247c"
+          }
+        },
+        {
+          "client_id": "1043452257427-e8ha6ats1stn63ld8rdl9o09c78k697q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyCm-I_M8WfQFuArEN3E5MyBKs_5RKmQxz8"
+          "current_key": "AIzaSyAN7sgihuDYJNaXWMPFZvFjm7Q2Gboo27A"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1043452257427-e8ha6ats1stn63ld8rdl9o09c78k697q.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1043452257427-a7hq4ufjt1i6rqcalfk6g05jgjis88qt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.geminiChatBot"
+              }
+            }
+          ]
         }
       }
     }
