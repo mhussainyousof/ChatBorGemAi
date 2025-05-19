@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '/models/message.dart';
 
+
+//! main message
 class MessageTile extends StatelessWidget {
   final Message message;
   final bool isOutgoing;
