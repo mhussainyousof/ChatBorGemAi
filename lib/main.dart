@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemini_chat_bot/screens/home_screen.dart';
 
 import '/firebase_options.dart';
 import '/screens/login_screen.dart';
@@ -40,8 +41,7 @@ class MyApp extends StatelessWidget {
           if (snapshot.data == null) {
             return const LoginScreen();
           }
-          return const SizedBox();
-          //! return const HomeScreen();
+           return const HomeScreen();
         },
       ),
     );
