@@ -5,7 +5,6 @@ import 'package:gemini_chat_bot/cloudaniry/data/fire_base_storage_repo.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
-
 import '/extensions/extensions.dart';
 import '/models/message.dart';
 
@@ -14,7 +13,6 @@ class ChatRepository {
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
 
-  // Pass cloudName and uploadPreset here when creating StorageRepository instance
   final String cloudName;
   final String uploadPreset;
 
@@ -29,9 +27,9 @@ class ChatRepository {
     required XFile? image,
     required String promptText,
   }) async {
-    final textModel = GenerativeModel(model: 'gemini-pro', apiKey: apiKey);
-    final imageModel = GenerativeModel(model: 'gemini-pro-vision', apiKey: apiKey);
-
+    final textModel = GenerativeModel(model: 'gemini-1.5-flash', apiKey: apiKey);
+    final imageModel = GenerativeModel(model: 'gemini-1.5-flash', apiKey: apiKey );
+   
     final userId = _auth.currentUser!.uid;
     final sentMessageId = const Uuid().v4();
 
@@ -109,7 +107,7 @@ class ChatRepository {
     required String apiKey,
   }) async {
     try {
-      final textModel = GenerativeModel(model: 'gemini-pro', apiKey: apiKey);
+      final textModel = GenerativeModel(model: 'gemini-1.5-flash', apiKey: apiKey);
 
       final userId = _auth.currentUser!.uid;
       final sentMessageId = const Uuid().v4();
@@ -130,7 +128,6 @@ class ChatRepository {
 
       final response = await textModel.generateContent([Content.text(textPrompt)]);
       final responseText = response.text;
-
       final receivedMessageId = const Uuid().v4();
 
       final responseMessage = Message(

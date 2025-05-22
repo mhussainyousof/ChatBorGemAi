@@ -125,13 +125,25 @@ class _SendImageScreenState extends ConsumerState<SendImageScreen> {
                       onPressed: () async {
                         if (image == null) return;
                         setState(() => isLoading = true);
-                        await ref.read(chatProvider).sendMessage(
-                              apiKey: apiKey,
-                              image: image,
-                              promptText: _promptController.text.trim(),
+                        try {
+                          await ref.read(chatProvider).sendMessage(
+                                apiKey: apiKey,
+                                image: image,
+                                promptText: _promptController.text.trim(),
+                              );
+
+                          if (mounted) Navigator.of(context).pop();
+                        } catch (e) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Error: ${e.toString()}')),
+                              
                             );
-                        setState(() => isLoading = false);
-                        Navigator.of(context).pop();
+                            print(e.toString());
+                          }
+                        } finally {
+                          if (mounted) setState(() => isLoading = false);
+                        }
                       },
                       child: const Text('Send Message'),
                     ),
