@@ -72,10 +72,10 @@ class _SendImageScreenState extends ConsumerState<SendImageScreen> {
                     )
                   : Image.file(
                       File(image!.path),
-                      fit: BoxFit.cover,
+                      fit: BoxFit.cover
                     ),
             ),
-            // Pick and Remove image buttons
+            //! Pick and Remove image buttons
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
