@@ -26,6 +26,7 @@ class _SendImageScreenState extends ConsumerState<SendImageScreen> {
     _pickImage();
     _promptController = TextEditingController();
     super.initState();
+    
   }
 
   @override
@@ -139,7 +140,6 @@ class _SendImageScreenState extends ConsumerState<SendImageScreen> {
                               SnackBar(content: Text('Error: ${e.toString()}')),
                               
                             );
-                            print(e.toString());
                           }
                         } finally {
                           if (mounted) setState(() => isLoading = false);
