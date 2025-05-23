@@ -21,17 +21,17 @@ class ChatRepository {
     required this.uploadPreset,
   });
 
-  //! This method sends an image alongside the text
+  //! Send message with optional image
   Future sendMessage({
     required String apiKey,
     required XFile? image,
     required String promptText,
   }) async {
-    final textModel = GenerativeModel(model: 'gemini-1.5-flash', apiKey: apiKey);
-    final imageModel = GenerativeModel(model: 'gemini-1.5-flash', apiKey: apiKey );
-   
     final userId = _auth.currentUser!.uid;
     final sentMessageId = const Uuid().v4();
+
+    final textModel = GenerativeModel(model: 'gemini-1.5-flash', apiKey: apiKey);
+    final imageModel = GenerativeModel(model: 'gemini-1.5-flash', apiKey: apiKey);
 
     Message message = Message(
       id: sentMessageId,
@@ -48,11 +48,10 @@ class ChatRepository {
         image: image,
         messageId: sentMessageId,
       );
-
       message = message.copyWith(imageUrl: downloadUrl);
     }
 
-    // Save message to Firebase
+    // Save user message
     await _firestore
         .collection('conversations')
         .doc(userId)
@@ -60,32 +59,32 @@ class ChatRepository {
         .doc(sentMessageId)
         .set(message.toMap());
 
-    GenerateContentResponse response;
-
     try {
+      final recentMessages = await _getRecentMessages(userId);
+      final contentHistory = recentMessages.map((m) => Content.text(m.message)).toList();
+
+      late GenerateContentResponse response;
+
       if (image == null) {
-        response = await textModel.generateContent([Content.text(promptText)]);
+        contentHistory.add(Content.text(promptText));
+        response = await textModel.generateContent(contentHistory);
       } else {
         final imageBytes = await image.readAsBytes();
-        final prompt = TextPart(promptText);
         final mimeType = image.getMimeTypeFromExtension();
         final imagePart = DataPart(mimeType, imageBytes);
-
-        response = await imageModel.generateContent([
-          Content.multi([
-            prompt,
-            imagePart,
-          ])
-        ]);
+        contentHistory.add(Content.multi([
+          TextPart(promptText),
+          imagePart,
+        ]));
+        response = await imageModel.generateContent(contentHistory);
       }
 
       final responseText = response.text;
-
       final receivedMessageId = const Uuid().v4();
 
       final responseMessage = Message(
         id: receivedMessageId,
-        message: responseText!,
+        message: responseText ?? '',
         createdAt: DateTime.now(),
         isMine: false,
       );
@@ -101,14 +100,13 @@ class ChatRepository {
     }
   }
 
-  //! Send Text Only Prompt
+  //! Send text-only prompt
   Future sendTextMessage({
     required String textPrompt,
     required String apiKey,
   }) async {
     try {
       final textModel = GenerativeModel(model: 'gemini-1.5-flash', apiKey: apiKey);
-
       final userId = _auth.currentUser!.uid;
       final sentMessageId = const Uuid().v4();
 
@@ -126,13 +124,17 @@ class ChatRepository {
           .doc(sentMessageId)
           .set(message.toMap());
 
-      final response = await textModel.generateContent([Content.text(textPrompt)]);
-      final responseText = response.text;
+      final recentMessages = await _getRecentMessages(userId);
+      final content = recentMessages.map((m) => Content.text(m.message)).toList();
+      content.add(Content.text(textPrompt));
+
+      final response = await textModel.generateContent(content);
+      final responseText = response.text ?? '';
       final receivedMessageId = const Uuid().v4();
 
       final responseMessage = Message(
         id: receivedMessageId,
-        message: responseText!,
+        message: responseText,
         createdAt: DateTime.now(),
         isMine: false,
       );
@@ -146,5 +148,18 @@ class ChatRepository {
     } catch (e) {
       throw Exception(e.toString());
     }
+  }
+
+  //! Get recent messages for context
+  Future<List<Message>> _getRecentMessages(String userId, {int limit = 10}) async {
+    final snapshot = await _firestore
+        .collection('conversations')
+        .doc(userId)
+        .collection('messages')
+        .orderBy('createdAt', descending: true)
+        .limit(limit)
+        .get();
+
+    return snapshot.docs.map((doc) => Message.fromMap(doc.data())).toList().reversed.toList();
   }
 }
