@@ -15,6 +15,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  
   late final TextEditingController _messageController;
   final apiKey = dotenv.env['API_KEY'] ?? '';
 
@@ -36,7 +37,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         actions: [
-          Consumer(builder: (context, ref, child) {
+          Consumer(
+            builder: (context, ref, child) {
             return IconButton(
               onPressed: () {
                 ref.read(authProvider).signout();

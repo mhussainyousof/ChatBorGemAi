@@ -8,6 +8,7 @@ import 'package:uuid/uuid.dart';
 import '/extensions/extensions.dart';
 import '/models/message.dart';
 
+
 @immutable
 class ChatRepository {
   final _auth = FirebaseAuth.instance;
