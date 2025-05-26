@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5,9 +7,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemini_chat_bot/helper/persion_fuction.dart';
 import 'package:gemini_chat_bot/provider/providers.dart';
+import 'package:gemini_chat_bot/repo/chat_repo.dart';
 import 'package:gemini_chat_bot/screens/send_image_screen.dart';
+import 'package:gemini_chat_bot/utils/image_picker.dart';
 import 'package:gemini_chat_bot/widgets/widget_messages_list.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:image_picker/image_picker.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -19,6 +24,16 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   late final TextEditingController _messageController;
   final apiKey = dotenv.env['API_KEY'] ?? '';
+  XFile? selectedImage;
+
+  Future<void> _pickImage() async {
+    final pickedImage = await pickImage(); // your own util function
+    if (pickedImage != null) {
+      setState(() {
+        selectedImage = pickedImage;
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -67,56 +82,98 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   userId: FirebaseAuth.instance.currentUser!.uid,
                 ),
               ),
-
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 3,
-                ),
-                margin: const EdgeInsets.only(top: 20),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-                child: Row(
-                  children: [
-                    //! Message Text field
-                    Expanded(
-                      child: TextField(
-                        maxLines: null,
-                        keyboardType: TextInputType.multiline,
-                        controller: _messageController,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Ask any question',
-                          hintStyle: TextStyle(
-                            color: Colors.grey.shade500,
-                            fontStyle: FontStyle.italic,
+             
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                   if (selectedImage != null)
+                    Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.file(
+                          File(selectedImage!.path),
+                          height: 100,
+                          width: 100,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedImage = null;
+                            });
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.5),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Padding(
+                              padding: EdgeInsets.all(4.0),
+                              child: Icon(Icons.close,
+                                  color: Colors.white, size: 20),
+                            ),
                           ),
                         ),
                       ),
+                    ],
+                  ),
+                  Container(
+                    padding:  const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 3,
                     ),
-
-                    // Image Button
-                    IconButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const SendImageScreen(),
+                    margin:   EdgeInsets.only(top:  selectedImage != null ? 5 : 20),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    child: Row(
+                      children: [
+                        //! Message Text field
+                        Expanded(
+                          child: TextField(
+                            maxLines: null,
+                            keyboardType: TextInputType.multiline,
+                            controller: _messageController,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'Ask any question',
+                              hintStyle: TextStyle(
+                                color: Colors.grey.shade500,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
                           ),
-                        );
-                      },
-                      icon: const Icon(
-                        Iconsax.gallery,
-                      ),
+                        ),
+                    
+                        // Image Button
+                        IconButton(
+                          onPressed: _pickImage,
+                          // () {
+                          //   Navigator.of(context).push(
+                          //     MaterialPageRoute(
+                          //       builder: (_) => const SendImageScreen(),
+                          //     ),
+                          //   );
+                          // },
+                          icon: const Icon(
+                            Iconsax.gallery,
+                          ),
+                        ),
+                    
+                        // Send Button
+                        IconButton(
+                            onPressed: sendMessage,
+                            icon: const Icon(Iconsax.send_1)),
+                      ],
                     ),
-
-                    // Send Button
-                    IconButton(
-                        onPressed: sendMessage,
-                        icon: const Icon(Iconsax.send_1)),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -127,11 +184,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Future sendMessage() async {
     final message = _messageController.text.trim();
-    if (message.isEmpty) return;
-    await ref.read(chatProvider).sendTextMessage(
-          apiKey: apiKey,
-          textPrompt: _messageController.text,
-        );
-    _messageController.clear();
+
+    if (message.isEmpty && selectedImage == null) return;
+
+    try {
+      if (selectedImage != null) {
+        await ref.read(chatProvider).sendMessage(
+              image: selectedImage,
+              apiKey: apiKey,
+              promptText: message,
+            );
+      } else {}
+      await ref
+          .read(chatProvider)
+          .sendTextMessage(textPrompt: message, apiKey: apiKey);
+      _messageController.clear();
+      setState(() {
+        selectedImage = null;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
   }
 }
