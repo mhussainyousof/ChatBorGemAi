@@ -22,7 +22,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   void initState() {
-
     _messageController = TextEditingController();
     super.initState();
   }
@@ -37,9 +36,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-     
-         
-       
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: Padding(
@@ -50,21 +46,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-               Consumer(builder: (context, ref, child) {
-            return Row(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    ref.read(authProvider).signout();
-                  },
-                  icon: const Icon(
-                    Iconsax.logout,
-                  ),
-                ),
-                const Text('Logout'),
-              ],
-            );
-          }),
+              Consumer(builder: (context, ref, child) {
+                return Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        ref.read(authProvider).signout();
+                      },
+                      icon: const Icon(
+                        Iconsax.logout,
+                      ),
+                    ),
+                    const Text('Logout'),
+                  ],
+                );
+              }),
               // Message List
               Expanded(
                 child: MessagesList(
@@ -118,7 +114,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     // Send Button
                     IconButton(
                         onPressed: sendMessage,
-                        icon: const Icon(Iconsax.send1)),
+                        icon: const Icon(Iconsax.send_1)),
                   ],
                 ),
               ),
