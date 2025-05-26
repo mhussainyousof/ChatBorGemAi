@@ -16,8 +16,7 @@ class MessageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final bgColor =
-    //     isOutgoing ? const Color.fromARGB(255, 103, 255, 116) : Colors.white;
+   
     final textColor = isOutgoing ? Colors.black87 : Colors.black87;
     final align = isOutgoing ? Alignment.centerRight : Alignment.centerLeft;
 
@@ -49,7 +48,6 @@ class MessageTile extends StatelessWidget {
                   end: Alignment.bottomRight,
                 ),
 
-          // color: bgColor,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(isOutgoing ? 16 : 0),
             topRight: Radius.circular(isOutgoing ? 0 : 16),
@@ -61,7 +59,6 @@ class MessageTile extends StatelessWidget {
               blurStyle: BlurStyle.outer,
               color: isOutgoing ? Colors.deepOrange : Colors.green,
               blurRadius: 3,
-              // spreadRadius: isOutgoing ? 0 : 1,
               offset: isOutgoing ? const Offset(0, 0) : const Offset(-1, -1),
             ),
           ],

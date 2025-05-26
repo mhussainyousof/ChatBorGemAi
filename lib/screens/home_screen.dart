@@ -87,6 +87,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           style: TextStyle(fontSize: 20),
                         ),
                         const Spacer(),
+                        const Text('Logout'),
                         IconButton(
                           onPressed: () {
                             ref.read(authProvider).signout();
@@ -95,7 +96,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             Iconsax.logout,
                           ),
                         ),
-                        const Text('Logout'),
                       ],
                     );
                   }),
@@ -202,12 +202,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Align(
     alignment: Alignment.bottomCenter,
     child: Padding(
-      padding: const EdgeInsets.only(bottom: 140), // Adjust bottom as needed
+      padding: const EdgeInsets.only(bottom: 140), 
         child: FloatingActionButton.small(
-        
           shape:const CircleBorder(),
-          backgroundColor: Colors.black45, // 🌈 Set your color here
-          foregroundColor: Colors.white, // Icon color
+          backgroundColor: Colors.black45, 
+          foregroundColor: Colors.white,
           onPressed: () {
             _scrollController.animateTo(
               0,
