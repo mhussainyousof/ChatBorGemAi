@@ -115,7 +115,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             child: const Padding(
                               padding: EdgeInsets.all(4.0),
                               child: Icon(Icons.close,
-                                  color: Colors.white, size: 20),
+                                  color: Colors.white, size: 15),
                             ),
                           ),
                         ),
@@ -154,19 +154,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         // Image Button
                         IconButton(
                           onPressed: _pickImage,
-                          // () {
-                          //   Navigator.of(context).push(
-                          //     MaterialPageRoute(
-                          //       builder: (_) => const SendImageScreen(),
-                          //     ),
-                          //   );
-                          // },
+                         
                           icon: const Icon(
                             Iconsax.gallery,
                           ),
                         ),
                     
-                        // Send Button
+                        //! Send Button
                         IconButton(
                             onPressed: sendMessage,
                             icon: const Icon(Iconsax.send_1)),
@@ -194,14 +188,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               apiKey: apiKey,
               promptText: message,
             );
-      } else {}
-      await ref
+      } else {
+         await ref
           .read(chatProvider)
           .sendTextMessage(textPrompt: message, apiKey: apiKey);
+      }
       _messageController.clear();
       setState(() {
         selectedImage = null;
       });
+     
     } catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Error: $e')));
