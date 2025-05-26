@@ -1,11 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemini_chat_bot/helper/persion_fuction.dart';
 import 'package:gemini_chat_bot/provider/providers.dart';
 import 'package:gemini_chat_bot/screens/send_image_screen.dart';
 import 'package:gemini_chat_bot/widgets/widget_messages_list.dart';
-
+import 'package:iconsax/iconsax.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -15,12 +17,12 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  
   late final TextEditingController _messageController;
   final apiKey = dotenv.env['API_KEY'] ?? '';
 
   @override
   void initState() {
+
     _messageController = TextEditingController();
     super.initState();
   }
@@ -35,82 +37,93 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        actions: [
-          Consumer(
-            builder: (context, ref, child) {
-            return IconButton(
-              onPressed: () {
-                ref.read(authProvider).signout();
-              },
-              icon: const Icon(
-                Icons.logout,
-              ),
+     
+         
+       
+      resizeToAvoidBottomInset: true,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+               Consumer(builder: (context, ref, child) {
+            return Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    ref.read(authProvider).signout();
+                  },
+                  icon: const Icon(
+                    Iconsax.logout,
+                  ),
+                ),
+                const Text('Logout'),
+              ],
             );
           }),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
-        ),
-        child: Column(
-          children: [
-            // Message List
-            Expanded(
-              child: MessagesList(
-                userId: FirebaseAuth.instance.currentUser!.uid,
+              // Message List
+              Expanded(
+                child: MessagesList(
+                  userId: FirebaseAuth.instance.currentUser!.uid,
+                ),
               ),
-            ),
 
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 3,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade400,
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              child: Row(
-                children: [
-                  // Message Text field
-                  Expanded(
-                    child: TextField(
-                      controller: _messageController,
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Ask any question',
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 3,
+                ),
+                margin: const EdgeInsets.only(top: 20),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                child: Row(
+                  children: [
+                    //! Message Text field
+                    Expanded(
+                      child: TextField(
+                        maxLines: null,
+                        keyboardType: TextInputType.multiline,
+                        controller: _messageController,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Ask any question',
+                          hintStyle: TextStyle(
+                            color: Colors.grey.shade500,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
 
-                  // Image Button
-                  IconButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const SendImageScreen(),
-                        ),
-                      );
-                    },
-                    icon: const Icon(
-                      Icons.image,
+                    // Image Button
+                    IconButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const SendImageScreen(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(
+                        Iconsax.gallery,
+                      ),
                     ),
-                  ),
 
-                  // Send Button
-                  IconButton(
-                    onPressed: sendMessage,
-                    icon: const Icon(
-                      Icons.send,
-                    ),
-                  ),
-                ],
+                    // Send Button
+                    IconButton(
+                        onPressed: sendMessage,
+                        icon: const Icon(Iconsax.send1)),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
