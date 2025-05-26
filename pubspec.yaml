@@ -22,6 +22,8 @@ dependencies:
   cloudinary_public: ^0.23.1
   path_provider: ^2.1.5
   mime: ^2.0.0
+  iconsax: ^0.0.8
+  cached_network_image: ^3.4.0
 
 dev_dependencies:
   flutter_test:
