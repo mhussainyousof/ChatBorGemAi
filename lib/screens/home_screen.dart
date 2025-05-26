@@ -2,13 +2,9 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gemini_chat_bot/helper/persion_fuction.dart';
 import 'package:gemini_chat_bot/provider/providers.dart';
-import 'package:gemini_chat_bot/repo/chat_repo.dart';
-import 'package:gemini_chat_bot/screens/send_image_screen.dart';
 import 'package:gemini_chat_bot/utils/image_picker.dart';
 import 'package:gemini_chat_bot/widgets/widget_messages_list.dart';
 import 'package:iconsax/iconsax.dart';
