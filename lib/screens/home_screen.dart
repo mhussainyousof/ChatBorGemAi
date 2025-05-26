@@ -25,6 +25,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   late final TextEditingController _messageController;
   final apiKey = dotenv.env['API_KEY'] ?? '';
   XFile? selectedImage;
+  late final ScrollController _scrollController;
+  bool _showScrollToBottomBtn = false;
+
+  @override
+  void initState() {
+    _messageController = TextEditingController();
+    _scrollController = ScrollController();
+
+    _scrollController.addListener(() {
+      final atBottom = _scrollController.offset <=
+          _scrollController.position.minScrollExtent + 20;
+
+      if (atBottom && _showScrollToBottomBtn) {
+        setState(() => _showScrollToBottomBtn = false);
+      } else if (!atBottom && !_showScrollToBottomBtn) {
+        setState(() => _showScrollToBottomBtn = true);
+      }
+    });
+
+    super.initState();
+  }
 
   Future<void> _pickImage() async {
     final pickedImage = await pickImage(); // your own util function
@@ -36,143 +57,169 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   @override
-  void initState() {
-    _messageController = TextEditingController();
-    super.initState();
-  }
-
-  @override
   void dispose() {
     _messageController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 12,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Consumer(builder: (context, ref, child) {
-                return Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        ref.read(authProvider).signout();
-                      },
-                      icon: const Icon(
-                        Iconsax.logout,
-                      ),
-                    ),
-                    const Text('Logout'),
-                  ],
-                );
-              }),
-              // Message List
-              Expanded(
-                child: MessagesList(
-                  userId: FirebaseAuth.instance.currentUser!.uid,
-                ),
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: Colors.white,
+          resizeToAvoidBottomInset: true,
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
               ),
-             
-              Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   if (selectedImage != null)
-                    Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.file(
-                          File(selectedImage!.path),
-                          height: 100,
-                          width: 100,
-                          fit: BoxFit.fill,
+                  Consumer(builder: (context, ref, child) {
+                    return Row(
+                      children: [
+                        const Text(
+                          "Let's Talk 🐦‍🔥 ",
+                          style: TextStyle(fontSize: 20),
                         ),
-                      ),
-                      Positioned(
-                        top: 8,
-                        right: 8,
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedImage = null;
-                            });
+                        const Spacer(),
+                        IconButton(
+                          onPressed: () {
+                            ref.read(authProvider).signout();
                           },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.5),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Padding(
-                              padding: EdgeInsets.all(4.0),
-                              child: Icon(Icons.close,
-                                  color: Colors.white, size: 15),
-                            ),
+                          icon: const Icon(
+                            Iconsax.logout,
                           ),
+                        ),
+                        const Text('Logout'),
+                      ],
+                    );
+                  }),
+                  // Message List
+                  Expanded(
+                    child: MessagesList(
+                      scrollController: _scrollController,
+                      userId: FirebaseAuth.instance.currentUser!.uid,
+                    ),
+                  ),
+
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (selectedImage != null)
+                        Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.file(
+                                File(selectedImage!.path),
+                                height: 100,
+                                width: 100,
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                            Positioned(
+                              top: 8,
+                              right: 8,
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectedImage = null;
+                                  });
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.5),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(4.0),
+                                    child: Icon(Icons.close,
+                                        color: Colors.white, size: 15),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 3,
+                        ),
+                        margin: EdgeInsets.only(
+                            top: selectedImage != null ? 5 : 20),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        child: Row(
+                          children: [
+                            //! Message Text field
+                            Expanded(
+                              child: TextField(
+                                maxLines: null,
+                                keyboardType: TextInputType.multiline,
+                                controller: _messageController,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'Ask any question',
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            // Image Button
+                            IconButton(
+                              onPressed: _pickImage,
+                              icon: const Icon(
+                                Iconsax.gallery,
+                              ),
+                            ),
+
+                            //! Send Button
+                            IconButton(
+                                onPressed: sendMessage,
+                                icon: const Icon(Iconsax.send_1)),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                  Container(
-                    padding:  const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 3,
-                    ),
-                    margin:   EdgeInsets.only(top:  selectedImage != null ? 5 : 20),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: Row(
-                      children: [
-                        //! Message Text field
-                        Expanded(
-                          child: TextField(
-                            maxLines: null,
-                            keyboardType: TextInputType.multiline,
-                            controller: _messageController,
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'Ask any question',
-                              hintStyle: TextStyle(
-                                color: Colors.grey.shade500,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                          ),
-                        ),
-                    
-                        // Image Button
-                        IconButton(
-                          onPressed: _pickImage,
-                         
-                          icon: const Icon(
-                            Iconsax.gallery,
-                          ),
-                        ),
-                    
-                        //! Send Button
-                        IconButton(
-                            onPressed: sendMessage,
-                            icon: const Icon(Iconsax.send_1)),
-                      ],
-                    ),
-                  ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
+        if (_showScrollToBottomBtn)
+  Align(
+    alignment: Alignment.bottomCenter,
+    child: Padding(
+      padding: const EdgeInsets.only(bottom: 140), // Adjust bottom as needed
+        child: FloatingActionButton.small(
+        
+          shape:const CircleBorder(),
+          backgroundColor: Colors.black45, // 🌈 Set your color here
+          foregroundColor: Colors.white, // Icon color
+          onPressed: () {
+            _scrollController.animateTo(
+              0,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        },
+        child: const Icon(Iconsax.arrow_down_1),
       ),
+    ),
+  ),
+      ],
     );
   }
 
@@ -189,15 +236,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               promptText: message,
             );
       } else {
-         await ref
-          .read(chatProvider)
-          .sendTextMessage(textPrompt: message, apiKey: apiKey);
+        await ref
+            .read(chatProvider)
+            .sendTextMessage(textPrompt: message, apiKey: apiKey);
       }
       _messageController.clear();
       setState(() {
         selectedImage = null;
       });
-     
     } catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Error: $e')));

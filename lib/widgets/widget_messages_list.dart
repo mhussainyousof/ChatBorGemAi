@@ -8,9 +8,12 @@ class MessagesList extends ConsumerWidget {
   const MessagesList({
     super.key,
     required this.userId,
+    required this.scrollController
   });
 
   final String userId;
+   final ScrollController scrollController;
+
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,6 +22,7 @@ class MessagesList extends ConsumerWidget {
     return messageData.when(
       data: (messages) {
         return ListView.builder(
+          controller: scrollController,
           reverse: true,
           itemCount: messages.length,
           itemBuilder: (context, index) {
