@@ -69,6 +69,9 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1043452257427',
     projectId: 'gemchat-a0a2b',
     storageBucket: 'gemchat-a0a2b.firebasestorage.app',
+    androidClientId: '1043452257427-8fe46kegc3rg41k7d4hbko4la2c72t3g.apps.googleusercontent.com',
+    iosClientId: '1043452257427-a7hq4ufjt1i6rqcalfk6g05jgjis88qt.apps.googleusercontent.com',
     iosBundleId: 'com.example.geminiChatBot',
   );
+
 }

@@ -1,40 +1,53 @@
-import 'package:flutter/foundation.dart' show immutable;
+import 'package:flutter/foundation.dart' show debugPrint, immutable, kIsWeb;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemini_chat_bot/provider/ui_state_providers.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
-
+  
 @immutable
 class AuthRepository {
   final FirebaseAuth _firebaseAuth;
-  final GoogleSignIn _googleSignIn;
+  final GoogleSignIn? _googleSignIn; // Make nullable for web
 
-   AuthRepository({
+  AuthRepository({
     FirebaseAuth? firebaseAuth,
     GoogleSignIn? googleSignIn,
   })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-        _googleSignIn = googleSignIn ?? GoogleSignIn();
+        _googleSignIn = googleSignIn ?? (kIsWeb ? null : GoogleSignIn());
 
   Future<UserCredential?> signInWithGoogle() async {
-    // Trigger the Google sign in flow
-    final googleUser = await _googleSignIn.signIn();
+    try {
+      if (kIsWeb) {
+        // Web implementation
+        final googleProvider = GoogleAuthProvider();
+        return await _firebaseAuth.signInWithPopup(googleProvider);
+      } else {
+        // Mobile implementation
+        final googleUser = await _googleSignIn?.signIn();
+        if (googleUser == null) return null;
 
-    // Check if user cancelled sign in
-    if (googleUser == null) return null;
-
-    // Get Google authentication credentials
-    final googleAuth = await googleUser.authentication;
-
-    // Convert Google credentials to Firebase credentials
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    // Sign in to Firebase with Google credentials
-    return await _firebaseAuth.signInWithCredential(credential);
+        final googleAuth = await googleUser.authentication;
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+        return await _firebaseAuth.signInWithCredential(credential);
+      }
+    } catch (e) {
+      debugPrint('Google sign-in error: $e');
+      return null;
+    }
   }
-Future<void> signout()async{
-  await _googleSignIn.signOut();
-  await _firebaseAuth.signOut();
+
+  Future<void> signout(WidgetRef ref) async {
+    ref.read(isLoadingProvider.notifier).state = true;
+    try {
+      if (!kIsWeb) {
+        await _googleSignIn?.signOut();
+      }
+      await _firebaseAuth.signOut();
+    } finally {
+      ref.read(isLoadingProvider.notifier).state = false;
+    }
+  }
 }
-} 

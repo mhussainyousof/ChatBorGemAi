@@ -91,10 +91,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           resizeToAvoidBottomInset: true,
           body: AnnotatedRegion<SystemUiOverlayStyle>(
              value: const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.dark, 
-          systemNavigationBarColor: Colors.transparent,
-          systemNavigationBarIconBrightness: Brightness.dark,
+          
         ),
             child: SafeArea(
               child: Padding(
@@ -116,7 +113,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           const Text('Logout'),
                           IconButton(
                             onPressed: () {
-                              ref.read(authProvider).signout();
+                              ref.read(authProvider).signout(ref);
                             },
                             icon: const Icon(
                               Iconsax.logout,
@@ -193,7 +190,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   controller: _messageController,
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
-                                    hintText: 'Ask any question',
+                                    hintText: 'Waiting for your question',
                                     hintStyle: TextStyle(
                                       color: Colors.grey.shade500,
                                       fontStyle: FontStyle.italic,
