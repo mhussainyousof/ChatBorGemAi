@@ -1,0 +1,2 @@
+C:/Users/hussain_yousof/Desktop/gemini_chat_bot-starter_code/android/app/.cxx/RelWithDebInfo/6q2r1d2u/x86/CMakeFiles/edit_cache.dir
+C:/Users/hussain_yousof/Desktop/gemini_chat_bot-starter_code/android/app/.cxx/RelWithDebInfo/6q2r1d2u/x86/CMakeFiles/rebuild_cache.dir

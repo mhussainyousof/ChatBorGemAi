@@ -31,7 +31,7 @@ class ChatRepository {
     final userId = _auth.currentUser!.uid;
     final sentMessageId = const Uuid().v4();
 
-    final textModel = GenerativeModel(model: 'gemini-2.5-pro', apiKey: apiKey);
+    final textModel = GenerativeModel(model: 'gemini-2.5-pro', apiKey: apiKey,);
     final imageModel = GenerativeModel(model: 'gemini-1.5-flash', apiKey: apiKey);
 
     Message message = Message(

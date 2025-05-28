@@ -20,7 +20,11 @@ class AuthRepository {
       if (kIsWeb) {
         // Web implementation
         final googleProvider = GoogleAuthProvider();
+         googleProvider.setCustomParameters({
+        'prompt': 'select_account'  
+      });
         return await _firebaseAuth.signInWithPopup(googleProvider);
+        
       } else {
         // Mobile implementation
         final googleUser = await _googleSignIn?.signIn();

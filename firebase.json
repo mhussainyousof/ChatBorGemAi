@@ -1,25 +1,4 @@
 {
-  "flutter": {
-    "platforms": {
-      "android": {
-        "default": {
-          "projectId": "gemchat-a0a2b",
-          "appId": "1:1043452257427:android:236560e3120f0df64e5966",
-          "fileOutput": "android/app/google-services.json"
-        }
-      },
-      "dart": {
-        "lib/firebase_options.dart": {
-          "projectId": "gemchat-a0a2b",
-          "configurations": {
-            "android": "1:1043452257427:android:236560e3120f0df64e5966",
-            "ios": "1:1043452257427:ios:14c4c83216c0ee694e5966",
-            "web": "1:1043452257427:web:a6b2af61291ffc614e5966"
-          }
-        }
-      }
-    }
-  },
   "hosting": {
     "public": "build/web",
     "ignore": [
